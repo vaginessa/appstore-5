@@ -1,9 +1,21 @@
 repository:
   url: https://github.com/WordPress/WordPress
-  commit: 4.0.1
+  branch: 4.0-branch
+
+information:
+  after-installation:
+    message: |
+      Thanks for installing WordPress. You can now browse to your application using the link
+      below and you'll be able to finish the installation. Once done, you can install themes
+      & plugins using the WordPress interface. Alternatively, you can connect to your application
+      using SSH and upload the files directly into your wp-content directory.
+    buttons:
+      -
+        destination: http://$DOMAIN
+        label: Continue to WordPress
 
 archfile:
-  platform: php5.5
+  platform: php-5.5
 
   settings:
     serve_static_files: true
@@ -13,6 +25,7 @@ archfile:
       name: web
       memory: standard
       command: vdt-php -p $PORT -w 2
+      quantity: 1
       public: true
       start_monitor:
         module: httpcheck
@@ -30,48 +43,32 @@ archfile:
   environment_variables:
     -
       key: WP_AUTH_KEY
-      random_value:
-        type: string
-        length: 64
+      value: "{{random:chars:64}}"
     -
       key: WP_SECURE_AUTH_KEY
-      random_value:
-        type: string
-        length: 64
+      value: "{{random:chars:64}}"
     -
       key: WP_LOGGED_IN_KEY
-      random_value:
-        type: string
-        length: 64
+      value: "{{random:chars:64}}"
     -
       key: WP_NONCE_KEY
-      random_value:
-        type: string
-        length: 64
+      value: "{{random:chars:64}}"
     -
       key: WP_AUTH_SALT
-      random_value:
-        type: string
-        length: 64
+      value: "{{random:chars:64}}"
     -
       key: WP_SECURE_AUTH_SALT
-      random_value:
-        type: string
-        length: 64
+      value: "{{random:hex:12}}"
     -
       key: WP_LOGGED_IN_SALT
-      random_value:
-        type: string
-        length: 64
+      value: "{{random:uuid}}"
     -
       key: WP_NONCE_SALT
-      random_value:
-        type: string
-        length: 64
+      value: "{{random:chars:10}}"
 
   config_files:
     -
-      file: .htaccess
+      path: .htaccess
       content: |
         # BEGIN WordPress
         <IfModule mod_rewrite.c>
@@ -85,7 +82,7 @@ archfile:
         # END WordPress
 
     -
-      file: wp-content.php
+      path: wp-content.php
       content: |
         <?php
         /**
