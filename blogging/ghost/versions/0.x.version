@@ -1,0 +1,106 @@
+repository:
+  url: https://github.com/TryGhost/Ghost
+  branch: stable
+
+information:
+  after-installation:
+    message: |
+      Thanks for installing Ghost. You now need to go ahead and create your first
+      user in your Ghost blog. Click the link below to proceed straight to the Ghost
+      set up wizard which will guide you on your way.
+    buttons:
+      -
+        destination: https://$DOMAIN/ghost
+        label: Continue to Ghost
+
+archfile:
+  platform: nodejs-0.10
+
+  processes:
+    -
+      name: web
+      memory: standard
+      command: npm start --production
+      quantity: 1
+      public: true
+      start_monitor:
+        module: httpcheck
+
+  persistent_directories:
+    -
+      path: content
+      sync_mode: always
+
+  shared_databases:
+    -
+      type: mysql
+      label: Wordpress DB
+
+  commands:
+    -
+      event: build
+      command: "rm -Rf .git && git init"
+    -
+      event: build
+      command: "npm install -g grunt-init"
+    -
+      event: build
+      command: "npm install"
+    -
+      event: build
+      command: "grunt init prod"
+
+  build_cache:
+    - node_modules
+
+  config_files:
+    -
+      path: config.js
+      content: |
+          // # Ghost Configuration
+          // Setup your Ghost install for various environments
+          // Documentation can be found at http://support.ghost.org/config/
+
+          var path = require('path'),
+              config;
+
+          config = {
+
+              production: {
+                  url: 'http://' + process.env.VDT_DOMAIN,
+                  mail: {
+                    transport: 'SMTP',
+                    options: {
+                      host: process.env.VDT_SMTP_HOST,
+                      auth: {
+                        user: process.env.VDT_SMTP_USERNAME,
+                        pass: process.env.VDT_SMTP_PASSWORD
+                      }
+                    }
+                  },
+                  database: {
+                      client: 'mysql',
+                      connection: {
+                          host     : process.env.VDT_DB_HOST,
+                          user     : process.env.VDT_DB_USER,
+                          password : process.env.VDT_DB_PASS,
+                          database : process.env.VDT_DB_NAME,
+                          charset  : 'utf8'
+                      },
+                      pool: { min: 0, max: 5 },
+                      debug: false
+                  },
+
+                  server: {
+                      // Host to be passed to node's `net.Server#listen()`
+                      host: process.env.VDT_IP || '127.0.0.1',
+                      // Port to be passed to node's `net.Server#listen()`, for iisnode set this to `process.env.PORT`
+                      port: process.env.PORT || '5000'
+                  }
+              }
+
+          };
+
+          // Export config
+          module.exports = config;
+
