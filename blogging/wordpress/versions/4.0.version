@@ -82,7 +82,7 @@ archfile:
         # END WordPress
 
     -
-      path: wp-content.php
+      path: wp-config.php
       content: |
         <?php
         /**
