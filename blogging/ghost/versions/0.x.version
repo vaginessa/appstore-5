@@ -39,7 +39,7 @@ archfile:
   commands:
     -
       event: build
-      command: "npm install"
+      command: "npm install --production"
 
   build_cache:
     - node_modules
