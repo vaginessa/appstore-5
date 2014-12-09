@@ -14,6 +14,16 @@ information:
         destination: http://$DOMAIN
         label: Continue to WordPress
 
+  general:
+    message: |
+      You should upload add own themes, plugins and content into the <b>wp-content</b> directory.
+      Be aware that any changes that you make outside of this directory will not persist when
+      you upgrade or deploy your blog.
+    buttons:
+      -
+        label: Login to my Wordpress Site
+        destination: http://$DOMAIN/wp-admin
+
 archfile:
   platform: php-5.5
 
@@ -58,13 +68,13 @@ archfile:
       value: "{{random:chars:64}}"
     -
       key: WP_SECURE_AUTH_SALT
-      value: "{{random:hex:12}}"
+      value: "{{random:chars:64}}"
     -
       key: WP_LOGGED_IN_SALT
-      value: "{{random:uuid}}"
+      value: "{{random:chars:64}}"
     -
       key: WP_NONCE_SALT
-      value: "{{random:chars:10}}"
+      value: "{{random:chars:64}}"
 
   config_files:
     -
