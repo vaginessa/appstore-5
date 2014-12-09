@@ -1,6 +1,6 @@
 repository:
-  url: https://github.com/TryGhost/Ghost
-  branch: stable
+  url: git://github.com/viaduct/ghost-prebuilt
+  branch: 0.x
 
 information:
   after-installation:
@@ -39,16 +39,7 @@ archfile:
   commands:
     -
       event: build
-      command: "rm -Rf .git && git init"
-    -
-      event: build
-      command: "npm install -g grunt-init"
-    -
-      event: build
       command: "npm install"
-    -
-      event: build
-      command: "grunt init prod"
 
   build_cache:
     - node_modules
