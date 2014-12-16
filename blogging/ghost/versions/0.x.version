@@ -34,7 +34,7 @@ archfile:
   shared_databases:
     -
       type: mysql
-      label: Wordpress DB
+      label: Ghost DB
 
   commands:
     -
