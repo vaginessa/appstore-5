@@ -1,0 +1,101 @@
+repository:
+  url: git://github.com/adamcooke/staytus
+  branch: stable
+
+information:
+  after-installation:
+    message: |
+      Thanks for installing Staytus. The first step for using Staytus is to
+      add your initial configuration. Just click the button below and you'll
+      be taken to the setup wizard.
+    buttons:
+      -
+        destination: https://$DOMAIN
+        label: Configure Staytus
+
+archfile:
+  platform: ruby-2.1
+
+  settings:
+    serve_static_files: true
+    document_root: public
+
+  processes:
+    -
+      name: web
+      memory: standard
+      command: bundle exec puma -p $PORT -t 5:5
+      quantity: 1
+      public: true
+      start_monitor:
+        module: httpcheck
+    -
+      name: worker
+      memory: standard
+      command: bundle exec rake jobs:work
+      quantity: 1
+      start_monitor:
+        module: log_string
+        string: "Starting job worker"
+
+  persistent_directories:
+    -
+      path: content
+      sync_mode: always
+
+  shared_databases:
+    -
+      type: mysql
+      label: Staytus DB
+
+  commands:
+    -
+      event: build
+      command: "bundle install --deployment --without development:test"
+      success_exit_code: 0
+    -
+      event: build
+      command: "bundle exec rake staytus:build"
+      success_exit_code: 0
+    -
+      event: build
+      command: "bundle exec rake staytus:upgrade"
+      success_exit_code: 0
+    -
+      event: firstrun
+      command: "bundle exec rake staytus:install"
+      success_exit_code: 0
+
+  build_cache:
+    - .bundle
+    - vendor/bundle
+
+  environment_variables:
+    -
+      key: RAILS_ENV
+      value: production
+    -
+      key: SECRET_KEY_BASE
+      value: "{{random:hex:64}}"
+    -
+      key: STAYTUS_SMTP_HOSTNAME
+      value: $VDT_SMTP_HOST
+    -
+      key: STAYTUS_SMTP_USERNAME
+      value: $VDT_SMTP_USERNAME
+    -
+      key: STAYTUS_SMTP_PASSWORD
+      value: $VDT_SMTP_PASSWORD
+
+  config_files:
+    -
+      path: config/database.yml
+      content: |
+        $RAILS_ENV:
+          adapter: mysql2
+          encoding: utf8
+          database: $VDT_DB_NAME
+          pool: 5
+          username: $VDT_DB_USER
+          password: $VDT_DB_PASS
+          host: $VDT_DB_HOST
