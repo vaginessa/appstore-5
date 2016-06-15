@@ -1,7 +1,7 @@
 details:
   name: Wordpress
   category: Blogging
-  default_version: 4.0
+  default_version: 4.5
   homepage: http://wordpress.org
   logo: https://cdn.viaduct.io/appstore/wordpress.png
   description: |

@@ -1,6 +1,6 @@
 repository:
   url: https://github.com/WordPress/WordPress
-  branch: 4.0-branch
+  branch: 4.5-branch
 
 information:
   after-installation:
